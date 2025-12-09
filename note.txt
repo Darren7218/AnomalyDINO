@@ -1,0 +1,10 @@
+1. Activate environment:
+conda activate faiss_gpu
+
+2. Go to your project folder:
+cd /mnt/c/Users/user/FYP/AnomalyDINO-main/AnomalyDINO-main
+
+3. Run VS code:
+code .
+
+4. start coding!!

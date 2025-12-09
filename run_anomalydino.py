@@ -26,9 +26,9 @@ class IntListAction(Action):
 
 def parse_args():
     parser = ArgumentParser()
-    parser.add_argument("--dataset", type=str, default="MVTec")
+    parser.add_argument("--dataset", type=str, default="PCB")
     parser.add_argument("--model_name", type=str, default="dinov2_vits14", help="Name of the backbone model. Choose from ['dinov2_vits14', 'dinov2_vitb14', 'dinov2_vitl14', 'dinov2_vitg14', 'vit_b_16'].")
-    parser.add_argument("--data_root", type=str, default="data/mvtec_anomaly_detection",
+    parser.add_argument("--data_root", type=str, default="data/pcb_anomaly_detection",
                         help="Path to the root directory of the dataset.")
     parser.add_argument("--preprocess", type=str, default="agnostic",
                         help="Preprocessing method. Choose from ['agnostic', 'informed', 'masking_only'].")
@@ -40,6 +40,7 @@ def parse_args():
                         help="List of shots to evaluate. Full-shot scenario is -1.")
     parser.add_argument("--num_seeds", type=int, default=1)
     parser.add_argument("--mask_ref_images", default=False)
+    parser.add_argument("--mask_threshold", type=int, default=10, help="Threshold for DINOv2 masking.")
     parser.add_argument("--just_seed", type=int, default=None)
     parser.add_argument('--save_examples', default=True, action=argparse.BooleanOptionalAction, help="Save example plots.")
     parser.add_argument("--eval_clf", default=True, action=argparse.BooleanOptionalAction, help="Evaluate anomaly detection performance.")
@@ -56,6 +57,9 @@ def parse_args():
 if __name__=="__main__":
 
     args = parse_args()
+    
+    if args.dataset == "PCB" and args.data_root == "data/mvtec_anomaly_detection":                                                                                                                          
+        args.data_root = "data/pcb_anomaly_detection"  # default path for PCB dataset
     
     print(f"Requested to run {len(args.shots)} (different) shot(s):", args.shots)
     print(f"Requested to repeat the experiments {args.num_seeds} time(s).")
@@ -138,7 +142,8 @@ if __name__=="__main__":
                                                                                 rotation = rotation_default[object_name],
                                                                                 seed = seed,
                                                                                 save_patch_dists = args.eval_clf, # save patch distances for detection evaluation
-                                                                                save_tiffs = args.eval_segm)      # save anomaly maps as tiffs for segmentation evaluation
+                                                                                save_tiffs = args.eval_segm,
+                                                                                mask_threshold = args.mask_threshold)      # save anomaly maps as tiffs for segmentation evaluation
                         
                         # write anomaly scores and inference times to file
                         for counter, sample in enumerate(anomaly_scores.keys()):

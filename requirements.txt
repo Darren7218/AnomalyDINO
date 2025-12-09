@@ -12,3 +12,4 @@ tifffile
 argparse
 PyYAML
 pandas
+albumentations
