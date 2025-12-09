@@ -4,6 +4,10 @@
 
 This is the official code to reproduce the experiments in the paper [AnomalyDINO: Boosting Patch-based Few-shot Anomaly Detection with DINOv2](https://arxiv.org/abs/2405.14529), accepted at IEEE/CVF Winter Conference on Applications of Computer Vision (WACV 2025).
 
+### Project Adaptation
+This repository has been adapted by **Ooh Rui Hang** for a Final Year Project focusing on few-shot anomaly detection for Printed Circuit Boards (PCBs). This adaptation includes specific dataset preparation and usage instructions for PCB datasets.
+
+
 ## Prerequisits
 
 1. Create a virtual environment (e.g., `python -m venv .venvAnomalyDINO`), activate it (e.g., `source .venvAnomalyDINO/bin/activate`) and install the required dependencies for AnomalyDINO:
@@ -12,9 +16,10 @@ This is the official code to reproduce the experiments in the paper [AnomalyDINO
     ```
     Info: If you want to use `faiss` with GPU-acceleration we recommend setting up a conda environment with the required packages instead (only conda installation is supported, see, e.g., [here](https://github.com/facebookresearch/faiss/wiki/Installing-Faiss#why-dont-you-support-installing-via-xxx-)). To perform similarity search on CPU set the additional flag `--faiss_on_cpu`.
 
-2. Download and prepare the datasets [MVTec-AD](https://www.mvtec.com/company/research/datasets/mvtec-ad) and [VisA](https://github.com/amazon-science/spot-diff) from their official sources.
+2. Download and prepare the datasets [MVTec-AD](https://www.mvtec.com/company/research/datasets/mvtec-ad), [VisA](https://github.com/amazon-science/spot-diff), or a PCB dataset from `data/PCB_DATASET`.
 For VisA, follow the instruction in the official repo to organize the data in the official 1-class splits. 
-The default data roots are `data/mvtec_anomaly_detection` for MVTec-AD, and `data/VisA_pytorch/1cls/` for VisA. 
+For the PCB dataset, ensure annotations are used to create ground truth masks using `python make_mask.py` and augment good training samples using `python augment_good_dataset.py`.
+The default data roots are `data/mvtec_anomaly_detection` for MVTec-AD, `data/VisA_pytorch/1cls/` for VisA, and `data/pcb_anomaly_detection` for the PCB dataset. 
 Please adapt the function calls below if necessary. 
 Alternatively, prepare your own dataset accordingly:
     ```
@@ -53,9 +58,17 @@ python run_anomalydino.py --dataset MVTec --shots 1 2 4 8 16 --num_seeds 3 --pre
 python run_anomalydino.py --dataset VisA --shots 1 2 4 8 16 --num_seeds 3 --preprocess agnostic --data_root data/VisA_pytorch/1cls/
 ```
 
+```shell
+python run_anomalydino.py --dataset PCB --shots 1 2 4 8 16 --num_seeds 3 --preprocess agnostic --data_root data/pcb_anomaly_detection
+```
+
 For a faster inspection use, e.g.,
 ```shell
 python run_anomalydino.py --dataset MVTec --shots 1 --num_seeds 1 --preprocess informed --data_root data/mvtec_anomaly_detection
+```
+
+```shell
+python run_anomalydino.py --dataset PCB --shots 1 --num_seeds 1 --preprocess informed --data_root data/pcb_anomaly_detection
 ```
 
 The script automatically creates some example plots, plots some anomaly maps for each object, and automatically evaluates each run (activate evaluation of segementation with `--eval_segm` if applicable).
@@ -70,8 +83,13 @@ To reproduce the results in the *batched* zero-shot scenario, run `run_anomalydi
 python run_anomalydino_batched.py --dataset MVTec --data_root data/mvtec_anomaly_detection
 ```
 ```shell
-python run_anomalydino_batched.py --dataset VisA --data_root data/VisA_pytorch/1cls/
+python run_anomalydino.py --dataset VisA --data_root data/VisA_pytorch/1cls/
 ```
+
+```shell
+python run_anomalydino.py --dataset PCB --data_root data/pcb_anomaly_detection
+```
+
 
 ---
 
@@ -79,6 +97,7 @@ This work uses the following ressources and datasets:
 - [DINOv2](https://github.com/facebookresearch/dinov2), code and model available under Apache 2.0 license.
 - The [MVTec-AD dataset](https://www.mvtec.com/company/research/datasets/mvtec-ad), available under the CC BY-NC-SA 4.0 license.
 - The [VisA dataset](https://github.com/amazon-science/spot-diff), available under the CC BY 4.0 license.
+- The PCB Anomaly Detection Dataset, available under specific academic use licenses. (Link to be added if publicly available).
 
 ---
 
